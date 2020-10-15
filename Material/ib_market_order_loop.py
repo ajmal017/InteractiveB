@@ -29,13 +29,6 @@ class TradingApp(EWrapper, EClient):
 def websocket_con():
     app.run()
     
-app = TradingApp()      
-app.connect("127.0.0.1", 7497, clientId=1)
-
-# starting a separate daemon thread to execute the websocket connection
-con_thread = threading.Thread(target=websocket_con, daemon=True)
-con_thread.start()
-time.sleep(1) # some latency added to ensure that the connection is established
 
 #creating object of the Contract class - will be used as a parameter for other function calls
 def usTechStk(symbol,sec_type="STK",currency="USD",exchange="ISLAND"):
@@ -50,14 +43,33 @@ def usTechStk(symbol,sec_type="STK",currency="USD",exchange="ISLAND"):
 def limitOrder(direction,quantity,lmt_price):
     order = Order()
     order.action = direction
-    order.orderType = "LMT"
+    order.orderType = "MKT"
     order.totalQuantity = quantity
-    order.lmtPrice = lmt_price
+    # order.lmtPrice = lmt_price
     return order
 
 
-order_id = app.nextValidOrderId
-app.placeOrder(order_id,usTechStk("MSFT"),limitOrder("BUY",1,200)) # EClient function to request contract details
-time.sleep(5) # some latency added to ensure that the contract details request has been processed
+app = TradingApp()
 
-app.disconnect()
+
+ticker = input("Enter a ticker: ").upper()
+if ticker!="":
+    qty = int(input("Enter quantity: "))
+    signal = input("Buy/Sell: ").upper()
+
+while ticker!="":
+    app.connect("127.0.0.1", 7497, clientId=1)
+
+    # starting a separate daemon thread to execute the websocket connection
+    con_thread = threading.Thread(target=websocket_con, daemon=True)
+    con_thread.start()
+    time.sleep(1) # some latency added to ensure that the connection is established
+
+    order_id = app.nextValidOrderId
+    app.placeOrder(order_id,usTechStk(ticker),limitOrder("BUY",qty,180)) # EClient function to request contract details
+    time.sleep(3) # some latency added to ensure that the contract details request has been processed
+    app.disconnect()
+    ticker = input("Enter a ticker: ").upper()
+    if ticker != "":
+        qty = int(input("Enter quantity: "))
+        signal = input("Buy/Sell: ").upper()

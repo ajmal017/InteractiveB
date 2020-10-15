@@ -34,4 +34,4 @@ app.reqContractDetails(100, contract)
 app.run()
 
 
-    
+app.disconnect()
