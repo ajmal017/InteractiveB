@@ -14,6 +14,8 @@ class TradeApp(EWrapper,EClient):
     def accountSummary(self, reqId: int, account: str, tag: str, value: str,currency: str):
         print(f"{tag}: {value}")
 
+
+
 def websocket_con():
     print("Initiating RUN loop")
     app.run()

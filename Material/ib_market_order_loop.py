@@ -19,16 +19,17 @@ class TradingApp(EWrapper, EClient):
         EClient.__init__(self,self)
         
     def error(self, reqId, errorCode, errorString):
-        print("Error {} {} {}".format(reqId,errorCode,errorString))
+        print("Code {} {} {}".format(reqId,errorCode,errorString))
         
     def nextValidId(self, orderId):
         super().nextValidId(orderId)
         self.nextValidOrderId = orderId
         print("NextValidId:", orderId)
 
+
 def websocket_con():
     app.run()
-    
+
 
 #creating object of the Contract class - will be used as a parameter for other function calls
 def usTechStk(symbol,sec_type="STK",currency="USD",exchange="ISLAND"):
@@ -37,15 +38,34 @@ def usTechStk(symbol,sec_type="STK",currency="USD",exchange="ISLAND"):
     contract.secType = sec_type
     contract.currency = currency
     contract.exchange = exchange
-    return contract 
+    return contract
+
+
+def usStk(symbol, sec_type='STK',currency='USD',primary_exch='SMART'):
+    contract = Contract()
+    contract.symbol = symbol
+    contract.secType = sec_type
+    contract.currency = currency
+    contract.primaryExchange = primary_exch
+    contract.exchange = 'SMART'
+    return contract
+
 
 #creating object of the limit order class - will be used as a parameter for other function calls
 def limitOrder(direction,quantity,lmt_price):
     order = Order()
     order.action = direction
+    order.orderType = "LMT"
+    order.totalQuantity = quantity
+    order.lmtPrice = lmt_price
+    return order
+
+
+def marketOrder(direction, quantity):
+    order = Order()
+    order.action = direction
     order.orderType = "MKT"
     order.totalQuantity = quantity
-    # order.lmtPrice = lmt_price
     return order
 
 
@@ -53,12 +73,14 @@ app = TradingApp()
 
 
 ticker = input("Enter a ticker: ").upper()
+signal = 'BUY'
+qty = 1
 if ticker!="":
     qty = int(input("Enter quantity: "))
     signal = input("Buy/Sell: ").upper()
 
 while ticker!="":
-    app.connect("127.0.0.1", 7497, clientId=1)
+    app.connect("127.0.0.1", 7497, clientId=9999)
 
     # starting a separate daemon thread to execute the websocket connection
     con_thread = threading.Thread(target=websocket_con, daemon=True)
@@ -66,9 +88,12 @@ while ticker!="":
     time.sleep(1) # some latency added to ensure that the connection is established
 
     order_id = app.nextValidOrderId
-    app.placeOrder(order_id,usTechStk(ticker),limitOrder("BUY",qty,180)) # EClient function to request contract details
-    time.sleep(3) # some latency added to ensure that the contract details request has been processed
+    app.placeOrder(order_id, usStk(ticker), marketOrder(signal, qty)) # EClient function to request contract details
+    time.sleep(2) # some latency added to ensure that the contract details request has been processed
     app.disconnect()
+    print("_"*30)
+    print(">> Press Enter to Exit...")
+    print("_" * 30)
     ticker = input("Enter a ticker: ").upper()
     if ticker != "":
         qty = int(input("Enter quantity: "))
