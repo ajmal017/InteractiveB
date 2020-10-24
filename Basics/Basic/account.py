@@ -12,8 +12,7 @@ class TradeApp(EWrapper,EClient):
         print("Error:",reqId,errorCode,errorString)
 
     def accountSummary(self, reqId: int, account: str, tag: str, value: str,currency: str):
-        print(f"{tag}: {value}")
-
+        print(tag,":",value)
 
 
 def websocket_con():
@@ -22,7 +21,7 @@ def websocket_con():
 
 
 app = TradeApp()
-app.connect("127.0.0.1", 7497, 0)
+app.connect("127.0.0.1", 4002, 0)
 
 thread = threading.Thread(target=websocket_con, daemon=True)
 thread.start()

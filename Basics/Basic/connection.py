@@ -17,7 +17,7 @@ def websocket_con():
 
 
 app = App()
-app.connect("127.0.0.1", 7497, 0)
+app.connect("127.0.0.1", 4002, 0)
 
 thread = threading.Thread(target=websocket_con, daemon=False)
 thread.start()

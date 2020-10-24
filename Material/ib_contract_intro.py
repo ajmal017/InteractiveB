@@ -29,7 +29,7 @@ ticker = input("Enter a stock ticker: ").upper()
 
 while ticker!="":
 
-    app.connect("127.0.0.1", 7497, clientId=9999)
+    app.connect("127.0.0.1", 4002, clientId=0)
     contract = Contract()
     contract.symbol = ticker
     contract.secType = "STK"
@@ -37,8 +37,8 @@ while ticker!="":
     contract.exchange = "SMART"
 
     app.reqContractDetails(next_reqId, contract)
-
+    time.sleep(3)
     app.run()
-    time.sleep(1)
+    time.sleep(2)
     app.disconnect()
     ticker = input("Enter a stock ticker: ").upper()
