@@ -30,7 +30,7 @@ def websocket_con():
     app.run()
     
 app = TradingApp()      
-app.connect("127.0.0.1", 7497, clientId=1)
+app.connect("127.0.0.1", 7497, clientId=9999)
 
 # starting a separate daemon thread to execute the websocket connection
 con_thread = threading.Thread(target=websocket_con, daemon=True)
@@ -42,5 +42,5 @@ app.reqPositions()
 time.sleep(1)
 pos_df = app.pos_df
 print(pos_df)
-time.sleep(5)
+time.sleep(1)
 app.disconnect()

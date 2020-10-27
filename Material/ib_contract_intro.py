@@ -8,6 +8,8 @@ IBAPI - Getting Contract info
 from ibapi.client import EClient
 from ibapi.wrapper import EWrapper
 from ibapi.contract import Contract
+from ids import next_reqId
+import time
 
 
 class TradingApp(EWrapper, EClient):
@@ -21,17 +23,22 @@ class TradingApp(EWrapper, EClient):
         print("redID: {}, contract:{}".format(reqId,contractDetails))
 
     
-app = TradingApp()      
-app.connect("127.0.0.1", 7497, clientId=1)
 
-contract = Contract()
-contract.symbol = "AAPL"
-contract.secType = "STK"
-contract.currency = "USD"
-contract.exchange = "SMART"
+app = TradingApp()
+ticker = input("Enter a stock ticker: ").upper()
 
-app.reqContractDetails(100, contract)
-app.run()
+while ticker!="":
 
+    app.connect("127.0.0.1", 4002, clientId=0)
+    contract = Contract()
+    contract.symbol = ticker
+    contract.secType = "STK"
+    contract.currency = "USD"
+    contract.exchange = "SMART"
 
-    
+    app.reqContractDetails(next_reqId, contract)
+    time.sleep(3)
+    app.run()
+    time.sleep(2)
+    app.disconnect()
+    ticker = input("Enter a stock ticker: ").upper()

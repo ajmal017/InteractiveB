@@ -42,7 +42,3 @@ contract.exchange = "SMART"
 
 app.reqContractDetails(100, contract) # EClient function to request contract details
 time.sleep(5) # some latency added to ensure that the contract details request has been processed
-
-
-
-    

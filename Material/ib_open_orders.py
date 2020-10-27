@@ -36,7 +36,7 @@ def websocket_con():
     app.run()
     
 app = TradingApp()      
-app.connect("127.0.0.1", 7497, clientId=1)
+app.connect("127.0.0.1", 7497, clientId=9999)
 
 # starting a separate daemon thread to execute the websocket connection
 con_thread = threading.Thread(target=websocket_con, daemon=True)
@@ -47,4 +47,6 @@ time.sleep(1) # some latency added to ensure that the connection is established
 app.reqOpenOrders()
 time.sleep(1)
 order_df = app.order_df
+print(order_df)
 time.sleep(5)
+app.disconnect()
